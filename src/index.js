@@ -110,6 +110,15 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.reply("Brrrsk!💨");
   }
 
+  // /help command
+  if (commandName === "help") {
+    await interaction.reply({
+      content:
+        "This is the ai powered BRSK Discord Bot.\n\n**COMMANDS**\n\n/points - Show your points\n/shop - Show the shop menu\n/mode - Select a mode\n/try - Guess the number\n!ask - Ask a question\n!synonym - Get synonyms for a word or phrase\n\nYou need more help? Go to GitHub: https://github.com/BRSKdev/brsk-dircord-bot",
+      ephemeral: true,
+    });
+  }
+
   // /mode command
   if (commandName === "mode") {
     const mode = interaction.options.getString("mode");

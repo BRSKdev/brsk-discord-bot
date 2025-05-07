@@ -79,11 +79,13 @@ npm run start
 
 ## Commands
 
+- `/help` - Show available commands and usage
 - `/mode` - Select game difficulty (easy, medium, hard)
 - `/try` - Guess a number based on current difficulty
 - `/points` - Check your current points
 - `/shop` - Purchase items with earned points
 - `!ask` - Ask the AI a question
+- `!synonym` - Get synonyms for a given word or phrase
 
 ## AI Integration
 
