@@ -63,10 +63,10 @@ DISCORD_BOT_TOKEN=*****...
 
 # Database Configuration (optional, can be defined in config.js)
 DB_TYPE=sqlite
-# DB_HOST=hostname
-# DB_USER=username
-# DB_PASSWORD=password
-# DB_DATABASE=database_name
+DB_HOST=hostname
+DB_USER=username
+DB_PASSWORD=password
+DB_DATABASE=database_name
 ```
 
 ## Commands
