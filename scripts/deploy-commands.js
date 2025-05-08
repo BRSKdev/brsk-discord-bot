@@ -16,9 +16,9 @@ const commands = [
         .setName("mode")
         .setDescription("Choose the game mode")
         .addChoices(
-          { name: "Easy (1-12) [10 points]", value: "easy" },
-          { name: "Medium (1-40) [25 points]", value: "medium" },
-          { name: "Hard (1-88) [50 points]", value: "hard" }
+          { name: "Easy (1-12) [10 XP] - for 3 Tokens", value: "easy" },
+          { name: "Medium (1-40) [25 XP] - for 2 Tokens", value: "medium" },
+          { name: "Hard (1-88) [50 XP] - for 1 Token", value: "hard" }
         )
         .setRequired(true)
     )
@@ -43,19 +43,48 @@ const commands = [
         .setRequired(true)
         .addChoices(
           ...Object.entries(shopItems).map(([name, price]) => ({
-            name: `${name} (${price} points)`,
+            name: `${name} (${price} Tokens)`,
             value: name,
           }))
         )
     ),
-  new SlashCommandBuilder().setName("points").setDescription("See your points"),
+  new SlashCommandBuilder().setName("points").setDescription("See your XP"),
+  new SlashCommandBuilder()
+    .setName("tokens")
+    .setDescription("See your current token status"),
+  new SlashCommandBuilder()
+    .setName("daily")
+    .setDescription("Claim your daily tokens"),
+  new SlashCommandBuilder()
+    .setName("convert")
+    .setDescription("Convert XP to Tokens")
+    .addIntegerOption((option) =>
+      option
+        .setName("amount")
+        .setDescription("Amount of XP to convert")
+        .setRequired(true)
+    ),
+  new SlashCommandBuilder()
+    .setName("leaderboard")
+    .setDescription("See the leaderboard")
+    .addStringOption((option) =>
+      option
+        .setName("type")
+        .setDescription("Type of leaderboard")
+        .setRequired(true)
+        .addChoices(
+          { name: "XP", value: "xp" },
+          { name: "Tokens", value: "tokens" },
+          { name: "Level", value: "level" }
+        )
+    ),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: "10" }).setToken(DISCORD_BOT_TOKEN);
 
 (async () => {
   try {
-    console.log("Slash-Commands werden registriert...");
+    console.log("Slash-Commands are being registered...");
     // server-specific commands (direkt)
     await rest.put(
       Routes.applicationGuildCommands(DISCORD_APPLICATION_ID, GUILD_ID),

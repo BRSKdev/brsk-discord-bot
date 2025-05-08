@@ -1,13 +1,15 @@
 # BRSK Discord Bot
 
-A Discord bot featuring gambling games and AI-powered interactions.
+A versatile Discord bot featuring gambling games, token economy, and AI-powered interactions.
 
 ## Features
 
-- **Gambling:** Try your luck with number guessing games in various difficulty levels
-- **AI Integration:** Chat with an ai model powered by a local Ollama server
-- **Shop System:** Earn points and redeem them for rewards
-- **Expanding Functionality:** New features added regularly
+- **Token Economy:** Earn and spend tokens for various activities
+- **Shop System:** Redeem tokens for rewards like gift cards
+- **XP & Leveling:** Gain experience points to level up and earn rewards
+- **Gambling:** Try your luck with number guessing games with different difficulty levels
+- **AI Integration:** Chat with an AI model powered by a local Ollama server
+- **Database Integration:** User data persists across bot restarts
 
 ## Installation
 
@@ -15,9 +17,11 @@ A Discord bot featuring gambling games and AI-powered interactions.
 # Install dependencies
 npm install
 
-# Install nodemon
-npm npm install -g nodemon
+# Install nodemon globally (if not already installed)
+npm install -g nodemon
 
+# Run the bot
+npm run start
 ```
 
 ## Configuration
@@ -25,42 +29,30 @@ npm npm install -g nodemon
 1. Create a `config.js` file in the root directory:
 
 ```javascript
-const dotenv = require("dotenv");
-
-dotenv.config();
-
-// discord bot
-const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
-const DISCORD_APPLICATION_ID = process.env.DISCORD_APPLICATION_ID;
-
-// guilds and channels
-const GUILD_ID = "102374...",
-const GENERAL_CHANNEL_ID = "1023747...";
-
-// admin id for special commands
-const ADMIN_ID = "9863354...";
-
-// ollama model
-const OLLAMA_MODEL = "llama3:latest";
-
-// shop items
-const shopItems = {
-  "5€ Gift Google Play Card": 120,
-  "10€ Gift Spotify Card": 160,
-  "20€ Gift Amazon Card": 240,
-  "50€ Gift Amazon Card": 400,
-};
-
 module.exports = {
-  DISCORD_APPLICATION_ID,
-  DISCORD_BOT_TOKEN,
-  GUILD_ID,
-  GENERAL_CHANNEL_ID,
-  ADMIN_ID,
-  OLLAMA_MODEL,
-  shopItems
+  DISCORD_BOT_TOKEN: "your-discord-bot-token",
+  DISCORD_APPLICATION_ID: "your-application-id",
+  GUILD_ID: "your-server-id",
+  GENERAL_CHANNEL_ID: "your-channel-id",
+  OLLAMA_MODEL: "your-ai-model",
+  ADMIN_ID: "admin-user-id",
+  // Database configuration
+  DB: {
+    TYPE: "sqlite", // or "mysql"
+    FILENAME: "data/discord_bot.db", // For SQLite
+    HOST: "localhost", // For MySQL
+    USER: "root", // For MySQL
+    PASSWORD: "", // For MySQL
+    DATABASE: "discord_bot" // For MySQL
+  },
+  // Shop items
+  shopItems: {
+    "5€ Gift Google Play Card": 120,
+    "10€ Gift Spotify Card": 160,
+    "20€ Gift Amazon Card": 240,
+    "50€ Gift Amazon Card": 400
+  }
 };
-
 ```
 
 2. Create a `.env` file with the following values:
@@ -68,28 +60,74 @@ module.exports = {
 ```env
 DISCORD_APPLICATION_ID=*****...
 DISCORD_BOT_TOKEN=*****...
-```
 
-## Start the bot
-
-```
-# Run the bot
-npm run start
+# Database Configuration (optional, can be defined in config.js)
+DB_TYPE=sqlite
+# DB_HOST=hostname
+# DB_USER=username
+# DB_PASSWORD=password
+# DB_DATABASE=database_name
 ```
 
 ## Commands
 
-- `/help` - Show available commands and usage
+### Game Commands
 - `/mode` - Select game difficulty (easy, medium, hard)
 - `/try` - Guess a number based on current difficulty
-- `/points` - Check your current points
-- `/shop` - Purchase items with earned points
+  - Easy mode: costs 3 tokens (range 1-12)
+  - Medium mode: costs 2 tokens (range 1-40)
+  - Hard mode: costs 1 token (range 1-88)
+
+### Economy Commands
+- `/tokens` - Check your current token balance and XP
+- `/daily` - Claim your daily token reward (3 tokens per day)
+- `/convert <amount>` - Convert XP to tokens (50 XP = 1 token)
+- `/shop` - Purchase items with tokens
+- `/leaderboard <type>` - View leaderboard rankings (XP, tokens, or level)
+
+### AI Commands
 - `!ask` - Ask the AI a question
-- `!synonym` - Get synonyms for a given word or phrase
+- `!synonym` - Get synonyms for a word or phrase
+
+### Other Commands
+- `/help` - Display a list of available commands
+- `/brsk` - Simple ping command
+
+## Token Economy
+
+- **Earning Tokens:**
+  - Daily login: 3 tokens per day
+  - Level up: 5 token bonus
+  - Converting XP: 50 XP = 1 token
+
+- **Spending Tokens:**
+  - Play games: 1-3 tokens based on difficulty
+  - Shop purchases: Various token costs
+
+## XP and Leveling
+
+- **Earning XP:**
+  - Winning games: XP varies based on difficulty
+  - Easy win: 10 XP
+  - Medium win: 25 XP
+  - Hard win: 50 XP
+
+- **Level Thresholds:**
+  - Level 1: 0-99 XP
+  - Level 2: 100-249 XP
+  - Level 3: 250-499 XP
+  - Level 4: 500-999 XP
+  - Level 5+: +750 XP per level
 
 ## AI Integration
 
 The bot connects to a local Ollama server for AI functionalities. Make sure the server is running and the specified model is available before using AI features.
+
+## Database
+
+The bot uses a database to store user data, transactions, and game results:
+- Primary database: MySQL (if configured)
+- Fallback: SQLite (local file-based database)
 
 
 ## License
