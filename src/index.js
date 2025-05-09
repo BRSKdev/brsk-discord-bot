@@ -239,7 +239,27 @@ async function handleDirectMessage(message, user) {
       }
     } else if (content === "/help") {
       await message.reply(
-        "Commands:\n/tokens - Show your tokens\n/daily - Claim daily tokens\n/help - Show this help menu"
+        "🎮 **BRSK Discord Bot** 🤖\n\n" +
+          "A Discord Bot for Gaming, AI interactions and more!\n\n" +
+          "**🎲 Game Commands:**\n" +
+          "`/mode` - Select a difficulty (Easy, Medium, Hard)\n" +
+          "`/try` - Guess the number and win tokens\n\n" +
+          "**💰 Economy Commands:**\n" +
+          "`/tokens` - Show your token balance\n" +
+          "`/points` - Show your XP\n" +
+          "`/daily` - Claim your daily tokens\n" +
+          "`/convert` - Convert XP to tokens\n" +
+          "`/shop` - Buy rewards with tokens\n" +
+          "`/leaderboard` - Show the leaderboard\n\n" +
+          "**🤖 AI Commands:**\n" +
+          "`!ask` - Ask a question\n" +
+          "`!synonym` - Find synonyms for a word\n" +
+          "`!see` - Analyze an image with AI\n\n" +
+          "**ℹ️ Other Commands:**\n" +
+          "`/help` - Show this help\n" +
+          "`/brsk` - Ping Command\n\n" +
+          "**🔗 Links:**\n" +
+          "GitHub: https://github.com/BRSKdev/brsk-discord-bot"
       );
     } else if (content.startsWith("!ask")) {
       await handleAskCommand(message, user);
@@ -272,10 +292,21 @@ client.on("interactionCreate", async (interaction) => {
   // Command-Handler with access to user data
   try {
     if (commandName === "tokens") {
-      await interaction.reply({
-        content: `🪙 **${user.tokens}** Tokens`,
-        flags: [MessageFlags.Ephemeral],
-      });
+      try {
+        // force refresh the user data
+        const user = await dbActions.getUser(interaction.user.id, true);
+
+        await interaction.reply({
+          content: `🪙 **${user.tokens} tokens**`,
+          flags: [MessageFlags.Ephemeral],
+        });
+      } catch (error) {
+        console.error(`Error in /tokens command: ${error.message}`);
+        await interaction.reply({
+          content: "There was an error processing your request.",
+          flags: [MessageFlags.Ephemeral],
+        });
+      }
     } else if (commandName === "daily") {
       const result = await dbActions.claimDaily(interaction.user.id);
 
@@ -295,7 +326,21 @@ client.on("interactionCreate", async (interaction) => {
     } else if (commandName === "help") {
       await interaction.reply({
         content:
-          "This is the ai powered BRSK Discord Bot.\n\n**COMMANDS**\n\n/points - Show your points\n/shop - Show the shop menu\n/mode - Select a mode\n/try - Guess the number\n!ask - Ask a question\n!synonym - Get synonyms for a word or phrase\n\nYou need more help? Go to GitHub: https://github.com/BRSKdev/brsk-dircord-bot",
+          "This is the AI powered BRSK Discord Bot.\n\n" +
+          "**SLASH COMMANDS**\n\n" +
+          "/mode - Select game difficulty (easy, medium, hard)\n" +
+          "/try - Guess a number based on current difficulty\n" +
+          "/tokens - Check your current tokens and XP\n" +
+          "/daily - Claim your daily token reward\n" +
+          "/convert <amount> - Convert XP to tokens\n" +
+          "/shop - Purchase items with tokens\n" +
+          "/leaderboard <type> - View rankings (XP, tokens, level)\n" +
+          "/brsk - Simple ping command\n\n" +
+          "**TEXT COMMANDS**\n\n" +
+          "!ask <question> - Ask the AI a question\n" +
+          "!synonym <word> - Get synonyms for a word or phrase\n" +
+          "!see <prompt> - Analyze an attached image\n\n" +
+          "Need more help? Go to GitHub: https://github.com/BRSKdev/brsk-dircord-bot",
         flags: [MessageFlags.Ephemeral],
       });
     } else if (commandName === "mode") {
@@ -479,6 +524,9 @@ client.on("interactionCreate", async (interaction) => {
         );
 
         if (result.success) {
+          // Cache für diesen Benutzer löschen
+          invalidateUserCache(interaction.user.id);
+
           await interaction.reply({
             content: `✅ You've converted **${result.xpSpent} XP** into **${result.tokensGained} tokens**. You now have **${result.newTokens} tokens**.`,
             flags: [MessageFlags.Ephemeral],
@@ -569,6 +617,10 @@ async function migrateOldPointsSystem() {
   } catch (error) {
     console.error("Migration error:", error);
   }
+}
+
+function invalidateUserCache(userId) {
+  userCache.delete(userId);
 }
 
 (async () => {

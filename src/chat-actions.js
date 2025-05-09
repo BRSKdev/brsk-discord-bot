@@ -95,8 +95,6 @@ async function seeImage(prompt, imageUrl) {
       ? "image/png"
       : "image/jpeg";
 
-    console.log(`Processing image: ${imagePath} (${imageBuffer.length} bytes)`);
-
     // Send request to Ollama
     const response = await axios.post("http://localhost:11434/api/generate", {
       model: OLLAMA_VISION_MODEL,
@@ -108,7 +106,7 @@ async function seeImage(prompt, imageUrl) {
       options: {
         temperature: 0.7,
         top_p: 0.9,
-        max_tokens: 750,
+        max_tokens: 200,
       },
     });
 
