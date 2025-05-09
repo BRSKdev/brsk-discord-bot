@@ -35,6 +35,7 @@ module.exports = {
   GUILD_ID: "your-server-id",
   GENERAL_CHANNEL_ID: "your-channel-id",
   OLLAMA_MODEL: "your-ai-model",
+  OLLAMA_VISION_MODEL: "llama3.2-vision:11b", // Vision AI model
   ADMIN_ID: "admin-user-id",
   // Database configuration
   DB: {
@@ -63,10 +64,10 @@ DISCORD_BOT_TOKEN=*****...
 
 # Database Configuration (optional, can be defined in config.js)
 DB_TYPE=sqlite
-DB_HOST=hostname
-DB_USER=username
-DB_PASSWORD=password
-DB_DATABASE=database_name
+# DB_HOST=hostname
+# DB_USER=username
+# DB_PASSWORD=password
+# DB_DATABASE=database_name
 ```
 
 ## Commands
@@ -88,6 +89,7 @@ DB_DATABASE=database_name
 ### AI Commands
 - `!ask` - Ask the AI a question
 - `!synonym` - Get synonyms for a word or phrase
+- `!see` - Analyze an image (must attach an image)
 
 ### Other Commands
 - `/help` - Display a list of available commands
