@@ -4,7 +4,7 @@ const {
   Partials,
   MessageFlags,
 } = require("discord.js");
-const { ask, synonym } = require("./chat-actions");
+const { ask, synonym, seeImage } = require("./chat-actions");
 const dbActions = require("./db-actions");
 const {
   DISCORD_BOT_TOKEN,
@@ -129,6 +129,8 @@ client.on("messageCreate", async (message) => {
     handleAskCommand(message, await ensureUserExists(message.author.id));
   } else if (message.content.startsWith("!synonym")) {
     handleSynonymCommand(message, await ensureUserExists(message.author.id));
+  } else if (message.content.startsWith("!see")) {
+    await handleSeeCommand(message, await ensureUserExists(message.author.id));
   }
 });
 
@@ -170,6 +172,49 @@ async function handleSynonymCommand(message, user) {
   } catch (error) {
     console.error("Error:", error);
     await message.reply("Oops! An error occurred. 💩");
+  }
+}
+
+async function handleSeeCommand(message, user) {
+  try {
+    // Check if there's an image attachment
+    const attachment = message.attachments.first();
+    if (!attachment) {
+      await message.reply(
+        "🖼️ You need to attach an image you want to analyze."
+      );
+      return;
+    }
+
+    // Check if the attachment is an image
+    const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    if (!imageTypes.some((type) => attachment.contentType?.startsWith(type))) {
+      await message.reply(
+        "❌ The attached file is not a supported image format (JPEG, PNG, GIF, WEBP)."
+      );
+      return;
+    }
+
+    // Get the prompt (everything after !see)
+    const prompt =
+      message.content.substring(4).trim() || "What is in this image?";
+
+    // Send typing indicator
+    message.channel.sendTyping();
+
+    // Process the image
+    const response = await seeImage(prompt, attachment.url);
+
+    // Award XP for using the AI function
+    await dbActions.addXp(message.author.id, 5); // More XP for image analysis
+
+    // Send the response
+    await message.reply(response);
+  } catch (error) {
+    console.error("Error in !see command:", error);
+    await message.reply(
+      "Oops! An error occurred while processing the image. 💩"
+    );
   }
 }
 
@@ -246,7 +291,7 @@ client.on("interactionCreate", async (interaction) => {
         });
       }
     } else if (commandName === "brsk") {
-      await interaction.reply("Brrrsk!��");
+      await interaction.reply("Brrrsk!💨");
     } else if (commandName === "help") {
       await interaction.reply({
         content:
