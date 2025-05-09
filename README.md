@@ -35,7 +35,7 @@ module.exports = {
   GUILD_ID: "your-server-id",
   GENERAL_CHANNEL_ID: "your-channel-id",
   OLLAMA_MODEL: "your-ai-model",
-  OLLAMA_VISION_MODEL: "llama3.2-vision:11b", // Vision AI model
+  OLLAMA_VISION_MODEL: "llama3.2-vision:11b",
   ADMIN_ID: "admin-user-id",
   // Database configuration
   DB: {
